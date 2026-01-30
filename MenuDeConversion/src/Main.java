@@ -9,7 +9,8 @@ public class Main {
     public static double numeroConversionMiaKm=1.609344;
     public static void main (String[] args) throws Exception{
         Scanner sc = new Scanner (System.in);
-        int opcion;
+        int opcion=0;
+        validarNumero(sc , opcion);
         do {
             System.out.println("Bienvenido al Menu de conversiones, en este menu podras convertir: \n°C a °F\n°F a °C\nKm a Millas\nMillas a Km\nSalir");
             opcion=sc.nextInt(); //Se lee opcion de eleccion
@@ -51,5 +52,17 @@ public class Main {
             }
 
         }while(opcion==5);
+    }
+    public static double validarNumero(Scanner sc,int opcion){
+       if(sc.hasNextInt()){
+           opcion = sc.nextInt();
+           if(opcion>0 && opcion <=5){
+               return opcion;
+           }else{
+               System.out.println("El dato ingresado no es numerico");
+                sc.next();
+           }
+       }
+       return 0;
     }
 }

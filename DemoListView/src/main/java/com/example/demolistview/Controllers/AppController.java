@@ -1,6 +1,7 @@
 package com.example.demolistview.Controllers;
 
 import com.example.demolistview.Service.PersonService;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -28,6 +29,8 @@ public class AppController {
     @FXML
     private TextField textAge;
 
+    @FXML
+    private TextField txtBuscar;
 
 
     @FXML
@@ -40,7 +43,15 @@ public class AppController {
         //Inicializar ListView
 
         loadFromFile();
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                    loadDataToForm(newValue); // String com el valor de row 0 test-@gmail.com-18
+                }
+        );
         listView.setItems(data);
+        txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Text field changed from " + oldValue + " to " + newValue);
+// Add your custom logic here (e.g., validation, updating other UI elements)
+        });
     }
     public void onAddPerson(){
         try{
@@ -65,6 +76,28 @@ public class AppController {
             lblMsg.setStyle("-fx-text-fill: red");
         }
     }
+    @FXML
+    public void onReload(){
+
+    }
+    @FXML
+    public void onDelete(){
+        int index=listView.getSelectionModel().getSelectedIndex();
+        try{
+            Service.deletePerson(index);
+            loadFromFile();
+            lblMsg.setText("Persona eliminada con exito");
+            lblMsg.setStyle("-fx-text-fill: green");
+            textName.clear();
+            textEmail.clear();
+            textAge.clear();
+        }catch (IOException e){
+            lblMsg.setText("Hubo un error con los datos en eliminar");
+            lblMsg.setStyle("-fx-text-fill: red");
+
+        }
+    }
+
 
     private void loadFromFile(){
         try{
@@ -77,6 +110,22 @@ public class AppController {
             lblMsg.setStyle("-fx-text-fill: red");
         }
 
+    }
+    private void loadBusqueda(String busqueda){
+        try{
+            List<String> items = Service.loadDataForListBusqueda(busqueda);
+            data.setAll(items);
+
+        }catch (IOException e){
+            lblMsg.setText(e.getMessage());
+            lblMsg.setStyle("-fx-text-fill: red");
+        }
+    }
+    private void loadDataToForm(String item){
+        String[] items= item.split("-");
+        textName.setText(items[0]);
+        textEmail.setText(items[1]);
+        textAge.setText(items[2]);
     }
 
 }

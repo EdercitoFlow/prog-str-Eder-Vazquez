@@ -19,8 +19,7 @@ public class PersonService {
             String[] parts = line.split("," , -1);
             String name = parts[0].trim();//Obtiene el nombre del arreglo
             String correo = parts[1].trim();//Obtiene el correo del arreglo
-
-            String edad = (parts.length > 2) ? parts[2].trim() : " N/A";
+            String edad = parts[2].trim();
             result.add(name+"--"+correo+"--"+edad+" años");//Se agrega a la lista de resultado con el formato deseado
         }
         return result;
@@ -33,6 +32,21 @@ public class PersonService {
         String nameNoComa= name.replace(",", "");
         String emailNoComa= email.replace(",", "");
         repo.appendNewLine(nameNoComa+","+emailNoComa+","+age);
+    }
+    public void deletePerson(int index) throws IOException{
+        List<String> lines = getAllCleanLines();
+        lines.remove(index);
+        repo.appendAllLine(lines);
+    }
+    private List <String> getAllCleanLines() throws IOException{
+        List<String> lines = repo.readAllLines();
+        List<String> cleanlines = new ArrayList<>();
+        for (String line : lines){
+            if (line!=null && !line.isBlank()){
+                cleanlines.add(line);
+            }
+        }
+        return cleanlines;
     }
 
     private void validatePerson(String name, String email) {
@@ -52,5 +66,6 @@ public class PersonService {
             throw new IllegalArgumentException("Debes ser mayor de edad para registrarte");
         }
     }
+
 
 }
